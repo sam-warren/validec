@@ -1,0 +1,100 @@
+1 Dargo, the Shipwrecker (SPG) 7 *F*
+1 Jeska, Thrice Reborn (SLD) 1201 *F*
+1 _____ Goblin (UNF) 107
+1 Altar of Dementia (BRR) 3
+1 Ancient Tomb (TMP) 315
+1 Arena of Glory (MH3) 215
+1 Arid Mesa (PMH2) 244s *F*
+1 Barbarian Ring (MH3) 299
+1 Birgi, God of Storytelling // Harnfel, Horn of Bounty (KHM) 311
+1 Bloodstained Mire (MH3) 216
+1 Bolt Bend (WAR) 115
+1 Buried Ruin (PIP) 254
+1 Cavern of Souls (AVR) 226
+1 Chalice of the Void (TSR) 390
+1 Chrome Mox (MRD) 152
+1 City of Traitors (EXO) 143
+1 Cloudstone Curio (RAV) 257
+1 Command Beacon (PLST) C15-56
+1 Crimson Kobolds (LEG) 139
+1 Crookshank Kobolds (LEG) 141
+1 Cursed Totem (MIR) 299
+1 Darksteel Citadel (MM2) 238
+1 Deflecting Swat (CMM) 214
+1 Demand Answers (MKM) 306
+1 Desperate Ritual (CHK) 163
+1 Dockside Extortionist (2X2) 107
+1 Everflowing Chalice (40K) 238
+1 Fire Giant's Fury (KHM) 389
+1 Flare of Duplication (MH3) 119
+1 Gamble (DMR) 321
+1 Gemstone Caverns (TSP) 274
+1 Gleeful Demolition (ONE) 134 *F*
+1 Goblin Bombardment (MH2) 279
+1 Goblin Engineer (TSR) 345
+1 Goblin Matron (USG) 191
+1 Goblin Welder (ULG) 80
+1 Great Furnace (PLST) C18-250
+1 Grim Monolith (ULG) 126
+1 Grinding Station (5DN) 127
+1 Homeward Path (C13) 295
+1 Imperial Recruiter (2XM) 131
+1 Impulsive Pilferer (CMM) 234
+1 Infernal Plunge (ISD) 148
+1 Jeska's Will (CLB) 799
+1 Jeweled Amulet (ICE) 326
+1 Jeweled Lotus (CMR) 319
+1 Kediss, Emberclaw Familiar (CMR) 188
+1 Kobolds of Kher Keep (LEG) 157
+1 Lightning Bolt (PLST) PF19-1
+1 Lion's Eye Diamond (MIR) 307
+1 Lotus Petal (TMP) 294
+1 Mana Crypt (EMA) 225
+1 Mana Vault (3ED) 263
+1 Manifold Key (TSR) 398
+1 Memnite (PLST) SOM-174
+1 Mishra's Bauble (BRR) 34
+1 Mox Amber (DOM) 224
+1 Mox Diamond (STH) 138
+1 Mox Opal (MM2) 223
+1 Not of This World (CMM) 807
+1 Ornithopter (DMR) 386
+1 Phyrexian Walker (VIS) 152
+1 Pinnacle Monk // Mystic Peak (MH3) 246
+1 Pyretic Ritual (M11) 153
+1 Pyroblast (5ED) 262
+1 Pyroclasm (P06) 3
+1 Ragavan, Nimble Pilferer (MH2) 138
+1 Red Elemental Blast (3ED) 171
+1 Relic of Legends (DMU) 236
+1 Ricochet Trap (WWK) 87
+1 Rite of Flame (SS3) 7 *F*
+1 Rograkh, Son of Rohgahh (CMR) 197
+1 Scalding Tarn (MM3) 244
+1 Seize the Day (ODY) 220
+1 Seize the Spotlight (OTC) 179
+1 Shield Sphere (ALL) 129
+1 Shinka, the Bloodsoaked Keep (CHK) 282
+1 Simian Spirit Guide (TSR) 190
+1 Skirk Prospector (ONS) 230
+1 Slicer, Hired Muscle // Slicer, High-Speed Antagonist (BOT) 6
+4 Snow-Covered Mountain (PANA) 260
+1 Sokenzan, Crucible of Defiance (PRM) 98133 *F*
+1 Sol Ring (3ED) 274
+1 Sundering Eruption // Volcanic Fissure (MH3) 248
+1 Talon Gates of Madara (M3C) 134
+1 The One Ring (LTR) 246
+1 Tibalt's Trickery (KHM) 153 *F*
+1 Tormod's Crypt (M21) 241
+1 Treasure Nabber (C18) 27
+1 Twinferno (DMU) 149
+1 Underworld Breach (SPG) 9
+1 Urza's Bauble (ICE) 343
+1 Urza's Saga (MH2) 259
+1 Welding Jar (MRD) 274
+1 Wheel of Fortune (3ED) 185
+1 Wheel of Misfortune (CMR) 211
+1 Wooded Foothills (MH3) 236
+
+SIDEBOARD:
+1 Fear of Missing Out (DSK) 136

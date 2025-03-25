@@ -1,0 +1,16 @@
+node_modules
+
+package-lock.json
+yarn.lock
+vite.config.ts
+
+dist
+build
+coverage
+
+.vscode
+
+**/vendor
+
+*.html
+
