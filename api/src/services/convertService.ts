@@ -1,42 +1,6 @@
-interface Card {
-  quantity: number;
-  name: string;
-  set?: string;
-  collectorNumber?: string;
-  isFoil?: boolean;
-}
-
-interface Deck {
-  name?: string;
-  format?: string;
-  mainboard: Card[];
-  sideboard: Card[];
-  commanders?: Card[];
-  metadata: {
-    source: string;
-    cardCount: number;
-    uniqueCardCount: number;
-    sideboardCount: number;
-    parseDate: string;
-  };
-}
+import { Card, Deck } from '../types/card';
 
 export class ConvertService {
-  
-  /**
-   * Convert a deck file to JSON format
-   * @param deckText Raw deck text content
-   * @returns Deck object with metadata
-   */
-  public async convertDeckFile(deckText: string): Promise<Deck> {
-    
-    // Determine source format based on file name pattern or content
-    let source = this.detectSourceFormat(deckText);
-
-    // Parse the deck based on the source format
-    return this.parseDeck(deckText, source);
-  }
-
   /**
    * Convert deck text directly to JSON format
    * @param deckText Raw deck text content
@@ -55,29 +19,32 @@ export class ConvertService {
    * @returns Detected source format
    */
   private detectSourceFormat(content: string): string {
-    
     // Check content patterns
     if (content.includes('About') && content.includes('Name') && content.includes('Deck')) {
       return 'mtga'; // MTGA usually has these sections
     }
-    
+
     // Check for Moxfield's set code and collector number pattern
     // Look for patterns like: "1 Card Name (SET) 123" or "1 Card Name (SET) 123s *F*"
     const moxfieldPattern = /\d+\s+.+?\s+\([A-Z0-9]{3,4}\)\s+\d+[a-z]?s?/;
-    if (moxfieldPattern.test(content) || content.includes('*CMDR*') || content.includes('*F*') || 
-        content.includes('SIDEBOARD:')) {
+    if (
+      moxfieldPattern.test(content) ||
+      content.includes('*CMDR*') ||
+      content.includes('*F*') ||
+      content.includes('SIDEBOARD:')
+    ) {
       return 'moxfield';
     }
-    
+
     // Count lines with basic "quantity name" pattern
-    const lines = content.split('\n').filter(line => line.trim() !== '');
-    const basicFormatLines = lines.filter(line => /^\d+\s+[^\d]/.test(line));
-    
+    const lines = content.split('\n').filter((line) => line.trim() !== '');
+    const basicFormatLines = lines.filter((line) => /^\d+\s+[^\d]/.test(line));
+
     // If most lines follow the basic pattern, it's likely MTGO format
     if (basicFormatLines.length > lines.length * 0.7) {
       return 'mtgo';
     }
-    
+
     return 'unknown';
   }
 
@@ -88,8 +55,11 @@ export class ConvertService {
    * @returns Deck object with metadata
    */
   public parseDeck(content: string, source: string): Deck {
-    const lines = content.trim().split('\n').filter(line => line.trim() !== '');
-    
+    const lines = content
+      .trim()
+      .split('\n')
+      .filter((line) => line.trim() !== '');
+
     const deck: Deck = {
       mainboard: [],
       sideboard: [],
@@ -108,7 +78,11 @@ export class ConvertService {
     let isAboutSection = false;
 
     // Process MTGA name if available
-    if ((source === 'mtga' || source === 'unknown') && content.includes('About') && content.includes('Name')) {
+    if (
+      (source === 'mtga' || source === 'unknown') &&
+      content.includes('About') &&
+      content.includes('Name')
+    ) {
       const nameMatch = content.match(/Name\s+(.*?)(?:\n|$)/);
       if (nameMatch && nameMatch[1]) {
         deck.name = nameMatch[1].trim();
@@ -119,14 +93,56 @@ export class ConvertService {
     if (source === 'unknown') {
       // Look for common sideboard markers
       const sideboardMarkers = [
-        'SIDEBOARD', 'Sideboard', 'sideboard', 'SB:', 'sb:', 
-        '//Sideboard', '// Sideboard', '// SIDEBOARD'
+        'SIDEBOARD',
+        'Sideboard',
+        'sideboard',
+        'SB:',
+        'sb:',
+        '//Sideboard',
+        '// Sideboard',
+        '// SIDEBOARD'
       ];
-      
+
       for (const marker of sideboardMarkers) {
         if (content.includes(marker)) {
           // Format has a sideboard section
           break;
+        }
+      }
+    }
+
+    // Check for commander in the last line before processing the deck
+    if (source === 'moxfield' || source === 'unknown') {
+      const lastLine = lines[lines.length - 1];
+      if (lastLine) {
+        // Check for commander indicators in the last line
+        if (
+          lastLine.includes('*CMDR*') ||
+          (lastLine.includes('*F*') && (!deck.commanders || deck.commanders.length === 0)) ||
+          lastLine.toLowerCase().includes('commander:')
+        ) {
+          // Parse the commander card
+          const commanderCard = this.parseCardLine(lastLine, source);
+          if (commanderCard) {
+            if (!deck.commanders) {
+              deck.commanders = [];
+            }
+            deck.commanders.push(commanderCard);
+            // Remove the commander line from the lines array
+            lines.pop();
+          }
+        } else if (!deck.commanders || deck.commanders.length === 0) {
+          // If no commander indicators but we haven't found a commander yet,
+          // treat the last line as the commander
+          const commanderCard = this.parseCardLine(lastLine, source);
+          if (commanderCard) {
+            if (!deck.commanders) {
+              deck.commanders = [];
+            }
+            deck.commanders.push(commanderCard);
+            // Remove the commander line from the lines array
+            lines.pop();
+          }
         }
       }
     }
@@ -137,17 +153,23 @@ export class ConvertService {
       if (line.trim() === '') {
         continue;
       }
-      
+
       // Check for sideboard section markers
-      if (line.trim() === 'SIDEBOARD:' || line.trim() === 'Sideboard' || 
-          line.trim() === 'SIDEBOARD' || line.trim() === 'sideboard' ||
-          line.trim() === 'SB:' || line.trim() === 'sb:' ||
-          line.trim() === '//Sideboard' || line.trim() === '// Sideboard' || 
-          line.trim() === '// SIDEBOARD') {
+      if (
+        line.trim() === 'SIDEBOARD:' ||
+        line.trim() === 'Sideboard' ||
+        line.trim() === 'SIDEBOARD' ||
+        line.trim() === 'sideboard' ||
+        line.trim() === 'SB:' ||
+        line.trim() === 'sb:' ||
+        line.trim() === '//Sideboard' ||
+        line.trim() === '// Sideboard' ||
+        line.trim() === '// SIDEBOARD'
+      ) {
         isSideboard = true;
         continue;
       }
-      
+
       // Skip section header for deck
       if (line.trim() === 'Deck') {
         continue;
@@ -156,11 +178,17 @@ export class ConvertService {
       // For unknown formats, check for common sideboard indicators in each line
       if (source === 'unknown') {
         const sideboardIndicators = [
-          'SIDEBOARD', 'Sideboard', 'sideboard', 'SB:', 'sb:',
-          '//Sideboard', '// Sideboard', '// SIDEBOARD'
+          'SIDEBOARD',
+          'Sideboard',
+          'sideboard',
+          'SB:',
+          'sb:',
+          '//Sideboard',
+          '// Sideboard',
+          '// SIDEBOARD'
         ];
-        
-        if (sideboardIndicators.some(indicator => line.includes(indicator))) {
+
+        if (sideboardIndicators.some((indicator) => line.includes(indicator))) {
           isSideboard = true;
           continue;
         }
@@ -181,17 +209,6 @@ export class ConvertService {
       // Skip About section content
       if (isAboutSection) {
         continue;
-      }
-
-      // Parse commander entries for specific formats
-      if ((source === 'moxfield' || source === 'unknown') && !isSideboard) {
-        // In Moxfield, check for commander indicators like "1 Commander Name (SET) ### *CMDR*"
-        if (line.includes('*CMDR*') || (line.includes('*F*') && deck.commanders?.length === 0) ||
-            line.toLowerCase().includes('commander:')) {
-          isCommander = true;
-        } else {
-          isCommander = false;
-        }
       }
 
       // Parse the card
@@ -224,19 +241,22 @@ export class ConvertService {
    */
   private detectDeckFormat(deck: Deck): void {
     if (deck.format) return; // Format already set
-    
+
     const totalCards = deck.metadata.cardCount + deck.metadata.sideboardCount;
-    
+
     // Check for commander
     if (deck.commanders && deck.commanders.length > 0) {
       deck.format = 'commander';
       return;
     }
-    
+
     // Check by card count
     if (deck.metadata.cardCount === 100 || totalCards === 100) {
       deck.format = 'commander';
-    } else if (deck.metadata.cardCount === 60 || (deck.metadata.cardCount >= 60 && deck.metadata.cardCount <= 63)) {
+    } else if (
+      deck.metadata.cardCount === 60 ||
+      (deck.metadata.cardCount >= 60 && deck.metadata.cardCount <= 63)
+    ) {
       // Most constructed formats use 60 cards
       deck.format = 'standard';
     } else if (deck.metadata.cardCount >= 40 && deck.metadata.cardCount <= 45) {
@@ -289,7 +309,9 @@ export class ConvertService {
       }
     } else if (source === 'moxfield') {
       // Moxfield: "1 Card Name (SET) 123 *F*" or "1 Card Name (SET) 123s *F*"
-      match = cleanLine.match(/^(\d+)\s+(.+?)(?:\s+\(([A-Z0-9]{3,4})\))?(?:\s+(\d+[a-z]?s?))?(\s+\*F\*)?$/);
+      match = cleanLine.match(
+        /^(\d+)\s+(.+?)(?:\s+\(([A-Z0-9]{3,4})\))?(?:\s+(\d+[a-z]?s?))?(\s+\*F\*)?$/
+      );
       if (match) {
         quantity = parseInt(match[1], 10);
         name = match[2].trim();
@@ -298,7 +320,9 @@ export class ConvertService {
         if (match[5]) isFoil = true;
       } else {
         // Try alternative Moxfield format that might have special characters in the card name
-        match = cleanLine.match(/^(\d+)\s+([^(]+)(?:\s+\(([A-Z0-9]{3,4})\))?(?:\s+(\d+[a-z]?s?))?(\s+\*F\*)?$/);
+        match = cleanLine.match(
+          /^(\d+)\s+([^(]+)(?:\s+\(([A-Z0-9]{3,4})\))?(?:\s+(\d+[a-z]?s?))?(\s+\*F\*)?$/
+        );
         if (match) {
           quantity = parseInt(match[1], 10);
           name = match[2].trim();

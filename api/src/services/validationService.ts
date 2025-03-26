@@ -1,25 +1,28 @@
-import axios from 'axios';
+import { ValidationResult } from '../types/validation';
+import { ScryfallCard } from '../types/card';
+import { ScryfallService } from './scryfallService';
 
-interface ValidationError {
-  cardName: string;
-  errorType: 'NOT_FOUND' | 'FORMAT_VIOLATION' | 'DECK_VIOLATION';
-  message: string;
-}
-
-interface ScryfallCard {
-  id: string;
-  name: string;
-  legalities: Record<string, string>;
-  // Add other relevant scryfall properties as needed
-}
-
-interface ValidationResult {
-  valid: boolean;
-  errors?: ValidationError[];
-}
-
+/**
+ * Service for validating decklists
+ *
+ * @export
+ * @class ValidationService
+ */
 export class ValidationService {
-  // Main function to validate a decklist
+  private scryfallService: ScryfallService;
+
+  constructor() {
+    this.scryfallService = new ScryfallService();
+  }
+
+  /**
+   * Validate a decklist
+   *
+   * @param {string[]} cards
+   * @param {string} [format='commander']
+   * @return {*}  {Promise<ValidationResult>}
+   * @memberof ValidationService
+   */
   async validateDeck(cards: string[], format: string = 'commander'): Promise<ValidationResult> {
     // Initialize result
     const result: ValidationResult = { valid: true, errors: [] };
@@ -28,7 +31,7 @@ export class ValidationService {
     const transformedDecklist = this.transformDecklist(cards);
 
     // Fetch card data
-    const cardData = await this.fetchCardData(transformedDecklist);
+    const cardData = await this.scryfallService.fetchCardData(transformedDecklist);
 
     // Validate card data against format
     const cardValidation = this.validateCardData(cardData, format);
@@ -52,75 +55,26 @@ export class ValidationService {
     return result;
   }
 
-  // Transform the decklist into a format that can be used by the validation service
+  /**
+   * Transform the decklist into a format that can be used by the validation service
+   *
+   * @param {string[]} decklist
+   * @return {*}  {string[]}
+   * @memberof ValidationService
+   */
   transformDecklist(decklist: string[]): string[] {
     // For now, just trim each card name
     return decklist.map((card) => card.trim());
   }
 
-  // Fetch card(s) data from scryfall
-  async fetchCardData(
-    cardNames: string[]
-  ): Promise<Array<{ cardName: string; found: boolean; data: ScryfallCard | null }>> {
-    // Split cardNames into chunks of 75 (Scryfall's limit per request)
-    const chunkSize = 75;
-    const cardChunks = [];
-    for (let i = 0; i < cardNames.length; i += chunkSize) {
-      cardChunks.push(cardNames.slice(i, i + chunkSize));
-    }
-
-    const allResults: Array<{ cardName: string; found: boolean; data: ScryfallCard | null }> = [];
-
-    // Process each chunk with a collection request
-    for (const chunk of cardChunks) {
-      try {
-        const response = await axios.post(
-          'https://api.scryfall.com/cards/collection',
-          {
-            identifiers: chunk.map(cardName => ({ name: cardName.trim() }))
-          },
-          {
-            headers: { 'Content-Type': 'application/json' }
-          }
-        );
-
-        // Map found cards to our result format
-        const foundCards = response.data.data || [];
-        const notFoundCards = response.data.not_found || [];
-        
-        // Add found cards to results
-        foundCards.forEach((card: ScryfallCard) => {
-          allResults.push({
-            cardName: card.name,
-            found: true,
-            data: card
-          });
-        });
-
-        // Add not found cards to results
-        notFoundCards.forEach((identifier: { name: string }) => {
-          allResults.push({
-            cardName: identifier.name,
-            found: false,
-            data: null
-          });
-        });
-      } catch (error) {
-        // If the API request fails, mark all cards in this chunk as not found
-        chunk.forEach(cardName => {
-          allResults.push({
-            cardName,
-            found: false,
-            data: null
-          });
-        });
-      }
-    }
-
-    return allResults;
-  }
-
-  // Validate the card(s) data
+  /**
+   *
+   *
+   * @param {(Array<{ cardName: string; found: boolean; data: ScryfallCard | null }>)} cardResults
+   * @param {string} format
+   * @return {*}  {ValidationResult}
+   * @memberof ValidationService
+   */
   validateCardData(
     cardResults: Array<{ cardName: string; found: boolean; data: ScryfallCard | null }>,
     format: string
@@ -155,7 +109,14 @@ export class ValidationService {
     return result;
   }
 
-  // Validate decklist rules
+  /**
+   * Validate the decklist against the format rules
+   *
+   * @param {string[]} cards
+   * @param {string} format
+   * @return {*}  {ValidationResult}
+   * @memberof ValidationService
+   */
   validateDecklist(cards: string[], format: string): ValidationResult {
     const result: ValidationResult = { valid: true, errors: [] };
 

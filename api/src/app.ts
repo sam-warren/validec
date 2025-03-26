@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import expressWinston from 'express-winston';
 import logger from './utils/logger';
-import { ValidationController } from './controllers/validationController';
 import { RegisterRoutes } from './routes/routes';
 
 // Load environment variables
@@ -46,6 +45,11 @@ RegisterRoutes(app);
 // Health check route
 app.get('/health', (req, res) => {
   res.send('API is running');
+});
+
+
+app.get('/', (req, res) => {
+  res.send('try /api-docs');
 });
 
 // Error logging

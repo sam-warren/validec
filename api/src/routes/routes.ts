@@ -12,6 +12,18 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "Card": {
+        "dataType": "refObject",
+        "properties": {
+            "quantity": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+            "set": {"dataType":"string"},
+            "collectorNumber": {"dataType":"string"},
+            "isFoil": {"dataType":"boolean"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ValidationError": {
         "dataType": "refObject",
         "properties": {
@@ -26,12 +38,13 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "valid": {"dataType":"boolean","required":true},
+            "deck": {"dataType":"nestedObjectLiteral","nestedProperties":{"commanders":{"dataType":"array","array":{"dataType":"refObject","ref":"Card"}},"sideboard":{"dataType":"array","array":{"dataType":"refObject","ref":"Card"},"required":true},"mainboard":{"dataType":"array","array":{"dataType":"refObject","ref":"Card"},"required":true}},"required":true},
             "errors": {"dataType":"array","array":{"dataType":"refObject","ref":"ValidationError"}},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ConvertAndValidateRequest": {
+    "ValidationRequest": {
         "dataType": "refObject",
         "properties": {
             "deckText": {"dataType":"string","required":true},
@@ -57,25 +70,25 @@ export function RegisterRoutes(app: Router) {
 
 
     
-        const argsValidationController_convertAndValidateDecklist: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ConvertAndValidateRequest"},
+        const argsValidationController_ValidateDecklist: Record<string, TsoaRoute.ParameterSchema> = {
+                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ValidationRequest"},
         };
         app.post('/api/validate',
             ...(fetchMiddlewares<RequestHandler>(ValidationController)),
-            ...(fetchMiddlewares<RequestHandler>(ValidationController.prototype.convertAndValidateDecklist)),
+            ...(fetchMiddlewares<RequestHandler>(ValidationController.prototype.ValidateDecklist)),
 
-            async function ValidationController_convertAndValidateDecklist(request: ExRequest, response: ExResponse, next: any) {
+            async function ValidationController_ValidateDecklist(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsValidationController_convertAndValidateDecklist, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsValidationController_ValidateDecklist, request, response });
 
                 const controller = new ValidationController();
 
               await templateService.apiHandler({
-                methodName: 'convertAndValidateDecklist',
+                methodName: 'ValidateDecklist',
                 controller,
                 response,
                 next,
