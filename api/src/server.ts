@@ -1,8 +1,6 @@
 import { createServer } from 'http';
 import logger from './utils/logger';
 import app from './app';
-import redocExpress from 'redoc-express';
-// import * as OpenApiValidator from "express-openapi-validator";
 import path from 'path';
 import fs from 'fs';
 
@@ -21,27 +19,10 @@ app.get('/api-spec', (req, res) => {
   res.json(openApiSpec);
 });
 
-// Serve ReDoc UI
-app.use(
-  '/api-docs',
-  redocExpress({
-    title: 'CEDH Tools API Documentation',
-    specUrl: '/api-spec',
-    redocOptions: {
-      hideDownloadButton: false,
-      hideHostname: false
-    }
-  })
-);
-
-// Validate requests against OpenAPI spec
-// app.use(
-//   OpenApiValidator.middleware({
-//     apiSpec: openApiSpec,
-//     validateRequests: false,
-//     validateResponses: false,
-//   }),
-// );
+// Serve RAPIDOC UI
+app.get('/api-docs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'rapi-doc.html'));
+});
 
 server.on('listening', () => {
   logger.info(`Server is running on port ${PORT}`);

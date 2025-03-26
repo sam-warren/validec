@@ -20,7 +20,7 @@
     "express-winston": "^4.2.0",
     "helmet": "^7.1.0",
     "lodash": "^4.17.21",
-    "redoc-express": "^2.1.0",
+    "rapidoc": "^9.3.8",
     "tsoa": "^6.6.0",
     "uuid": "^11.1.0",
     "winston": "^3.17.0"

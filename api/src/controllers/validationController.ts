@@ -36,7 +36,6 @@ export class ValidationController {
 
       // Convert the deck text to a structured format
       const deck = this.convertService.convertDeckText(normalizedDeckText);
-      console.log('deck', deck);
 
       // Extract card names from the converted deck
       const cards = [

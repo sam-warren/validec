@@ -9,4 +9,6 @@ cd .docker/
 docker compose up --build -d
 ```
 
-This project was created using `bun init` in bun v1.2.1. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## API Documentation
+
+The API documentation is available at `http://localhost:7000/api-docs`.
