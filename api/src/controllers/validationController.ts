@@ -40,7 +40,7 @@ export class ValidationController {
       // Extract card names from the converted deck
       const cards = [
         ...deck.mainboard.flatMap((card) => Array(card.quantity).fill(card.name)),
-        ...(deck.commanders?.flatMap((card) => Array(card.quantity).fill(card.name)) || [])
+        ...deck.sideboard.flatMap((card) => Array(card.quantity).fill(card.name))
       ];
 
       // Use the format from the converted deck if not explicitly provided
@@ -51,10 +51,10 @@ export class ValidationController {
 
       return {
         valid: validationResponse.valid,
+        errors: validationResponse.errors,
         deck: {
           mainboard: deck.mainboard,
-          sideboard: deck.sideboard,
-          commanders: deck.commanders
+          sideboard: deck.sideboard
         }
       };
     } catch (error) {

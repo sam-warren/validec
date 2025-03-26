@@ -47,11 +47,12 @@ export class ValidationService {
       result.errors = [...(result.errors || []), ...(deckValidation.errors || [])];
     }
 
-    // If there are no errors, ensure the errors array is not included in the response
-    if (result.valid) {
-      delete result.errors;
-    }
+    // // If there are no errors, ensure the errors array is not included in the response
+    // if (result.valid) {
+    //   delete result.errors;
+    // }
 
+    console.log('result', result);
     return result;
   }
 

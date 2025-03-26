@@ -17,7 +17,6 @@ export interface Deck {
   format?: string;
   mainboard: Card[];
   sideboard: Card[];
-  commanders?: Card[];
   metadata: {
     source: string;
     cardCount: number;

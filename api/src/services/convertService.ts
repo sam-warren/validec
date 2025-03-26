@@ -63,7 +63,6 @@ export class ConvertService {
     const deck: Deck = {
       mainboard: [],
       sideboard: [],
-      commanders: [],
       metadata: {
         source,
         cardCount: 0,
@@ -74,7 +73,6 @@ export class ConvertService {
     };
 
     let isSideboard = false;
-    let isCommander = false;
     let isAboutSection = false;
 
     // Process MTGA name if available
@@ -107,42 +105,6 @@ export class ConvertService {
         if (content.includes(marker)) {
           // Format has a sideboard section
           break;
-        }
-      }
-    }
-
-    // Check for commander in the last line before processing the deck
-    if (source === 'moxfield' || source === 'unknown') {
-      const lastLine = lines[lines.length - 1];
-      if (lastLine) {
-        // Check for commander indicators in the last line
-        if (
-          lastLine.includes('*CMDR*') ||
-          (lastLine.includes('*F*') && (!deck.commanders || deck.commanders.length === 0)) ||
-          lastLine.toLowerCase().includes('commander:')
-        ) {
-          // Parse the commander card
-          const commanderCard = this.parseCardLine(lastLine, source);
-          if (commanderCard) {
-            if (!deck.commanders) {
-              deck.commanders = [];
-            }
-            deck.commanders.push(commanderCard);
-            // Remove the commander line from the lines array
-            lines.pop();
-          }
-        } else if (!deck.commanders || deck.commanders.length === 0) {
-          // If no commander indicators but we haven't found a commander yet,
-          // treat the last line as the commander
-          const commanderCard = this.parseCardLine(lastLine, source);
-          if (commanderCard) {
-            if (!deck.commanders) {
-              deck.commanders = [];
-            }
-            deck.commanders.push(commanderCard);
-            // Remove the commander line from the lines array
-            lines.pop();
-          }
         }
       }
     }
@@ -217,8 +179,6 @@ export class ConvertService {
         if (isSideboard) {
           deck.sideboard.push(card);
           deck.metadata.sideboardCount += card.quantity;
-        } else if (isCommander) {
-          deck.commanders?.push(card);
         } else {
           deck.mainboard.push(card);
           deck.metadata.cardCount += card.quantity;
@@ -243,12 +203,6 @@ export class ConvertService {
     if (deck.format) return; // Format already set
 
     const totalCards = deck.metadata.cardCount + deck.metadata.sideboardCount;
-
-    // Check for commander
-    if (deck.commanders && deck.commanders.length > 0) {
-      deck.format = 'commander';
-      return;
-    }
 
     // Check by card count
     if (deck.metadata.cardCount === 100 || totalCards === 100) {
